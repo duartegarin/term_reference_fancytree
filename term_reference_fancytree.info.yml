@@ -1,0 +1,4 @@
+name: 'Term Reference Fancytree'
+type: module
+description: 'Provides a tree like widget for term reference fields using the Fancytree plugin.'
+core: 8.x
