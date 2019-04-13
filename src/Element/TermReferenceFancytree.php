@@ -41,7 +41,6 @@ class TermReferenceFancytree extends FormElement {
       $list = TermReferenceFancytree::getTopLevelNodes($element);
       $expandedNodes = TermReferenceFancytree::getExpandedNodes($element);
 
-
       // Attach our libary and settings.
       $element['#attached']['library'][] = 'term_reference_fancytree/tree';
       $element['#attached']['drupalSettings']['term_reference_fancytree'][$element['#id']]['tree'][] = [
@@ -51,7 +50,7 @@ class TermReferenceFancytree extends FormElement {
         // We pass default values to Javascript so we can have them selected.
         'default_values' => $element['#default_value'],
         // We pass the parent terms we want to auto-expand.
-        'expanded' => $expandedNodes
+        'expanded' => $expandedNodes,
       ];
 
       // Create HTML wrappers.
@@ -68,17 +67,17 @@ class TermReferenceFancytree extends FormElement {
    *
    * These are term parents that contain selected children.
    *
-   * @param $element
+   * @param array $element
+   *   The form element.
    *
    * @return array
    *   List of terms that should be expanded.
-   *
    */
-  public static function getExpandedNodes($element){
+  public static function getExpandedNodes(array $element) {
 
-    // Load a list with the default values
+    // Load a list with the default values.
     $default_values = [];
-    foreach ($element['#default_value'] as $default_value){
+    foreach ($element['#default_value'] as $default_value) {
 
       $default_values[] = $default_value['target_id'];
     }
@@ -87,10 +86,10 @@ class TermReferenceFancytree extends FormElement {
     // Create a list of unique term parents for our default values.
     // These parent terms will need to be expanded.
     $expanded = [];
-    foreach($default_values as $default_value){
+    foreach ($default_values as $default_value) {
       $node['parents'] = $default_value->get('parent')->getValue();
       $node['vid'] = $default_value->get('vid')->getValue()[0]['target_id'];
-      array_push($expanded,$node);
+      array_push($expanded, $node);
     }
     // Return the list without duplicates.
     return array_unique($expanded, SORT_REGULAR);
@@ -102,18 +101,20 @@ class TermReferenceFancytree extends FormElement {
    * If multiple vocabularies, it will return the vocabulary names, otherwise
    * it will return the top level terms.
    *
-   * @param $element
+   * @param array $element
+   *   The form element.
    *
    * @return array
+   *   The nested JSON array with the top level nodes.
    */
-  public static function getTopLevelNodes($element){
+  public static function getTopLevelNodes(array $element) {
     // If we have more than one vocabulary, we load the vocabulary names as
     // the initial level.
-    if(count($element['#vocabulary']) > 1){
+    if (count($element['#vocabulary']) > 1) {
       return TermReferenceFancytree::getVocabularyNamesJsonArray($element['#vocabulary']);
     }
     // Otherwise, we load the list of terms on the first level.
-    else{
+    else {
       $taxonomy_vocabulary = \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')->load(reset($element['#vocabulary'])->id());
       // Load the terms in the first level.
       $terms = TermReferenceFancytree::loadTerms($taxonomy_vocabulary, 0);
@@ -130,7 +131,7 @@ class TermReferenceFancytree extends FormElement {
     $selected_terms = [];
     // Ensure our input is not empty and loop through the input values for
     // submission.
-    //@Todo check if we need this.
+    // @Todo check if we need this.
     if (is_array($input) && !empty($input)) {
       foreach ($input as $tid) {
         $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($tid);
@@ -222,7 +223,7 @@ class TermReferenceFancytree extends FormElement {
 
         // Checking the term against the default values and if present, mark as
         // selected.
-        if(is_numeric(array_search($term->id(), array_column($default_values, 'target_id')))){
+        if (is_numeric(array_search($term->id(), array_column($default_values, 'target_id')))) {
           $item['selected'] = TRUE;
         }
 
@@ -253,10 +254,10 @@ class TermReferenceFancytree extends FormElement {
         $item = [
           'title' => Html::escape($vocabulary->get('name')),
           'key' => $vocabulary->id(),
-          'vocab' => true,
-          'unselectable' => true,
-          'lazy' => true,
-          'folder' => true
+          'vocab' => TRUE,
+          'unselectable' => TRUE,
+          'lazy' => TRUE,
+          'folder' => TRUE,
         ];
         $items[] = $item;
       }

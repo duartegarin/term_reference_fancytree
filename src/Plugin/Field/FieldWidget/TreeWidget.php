@@ -18,7 +18,6 @@ use Drupal\taxonomy\Entity\Vocabulary;
  *   multiple_values = TRUE
  * )
  */
-
 class TreeWidget extends WidgetBase implements WidgetInterface {
 
   /**

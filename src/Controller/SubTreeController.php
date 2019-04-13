@@ -56,13 +56,13 @@ class SubTreeController extends ControllerBase {
 
     // If the parent is a vocabulary, we want to load the first level of terms
     // of that vocabulary.
-    if($vocab){
+    if ($vocab) {
       $taxonomy_vocabulary = \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')->load($parent);
       $terms = TermReferenceFancytree::loadTerms($taxonomy_vocabulary, 0, -1);
       $list = TermReferenceFancytree::getNestedListJsonArray($terms, []);
     }
     // Otherwise, it's a term and we want it's children.
-    else{
+    else {
       $term = $this->entityTypeManager()->getStorage('taxonomy_term')->load($parent);
       if ($term) {
         $taxonomy_vocabulary = $this->entityTypeManager()->getStorage('taxonomy_vocabulary')->load($term->getVocabularyId());
