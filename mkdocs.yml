@@ -1,0 +1,5 @@
+site_name: Term Reference Fancytree
+pages:
+    - Overview: index.md
+theme: readthedocs
+extra_css: [docs.css]
