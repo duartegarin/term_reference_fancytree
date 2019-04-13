@@ -47,7 +47,7 @@
       focusOnSelect: false, // Set focus when node is checked by a mouse click
       generateIds: false, // Generate id attributes like <span id='fancytree-id-KEY'>
       idPrefix: 'ft_', // Used to generate node id´s like <span id='fancytree-id-<key>'>.
-      icon: false, // Display node icons.
+      icon: true, // Display node icons.
       keyboard: true, // Support keyboard navigation.
       keyPathSeparator: '/', // Used by node.getKeyPath() and tree.loadKeyPath().
       minExpandLevel: 1, // 1: root node is not collapsible

@@ -255,7 +255,8 @@ class TermReferenceFancytree extends FormElement {
           'key' => $vocabulary->id(),
           'vocab' => true,
           'unselectable' => true,
-          'lazy' => true
+          'lazy' => true,
+          'folder' => true
         ];
         $items[] = $item;
       }
