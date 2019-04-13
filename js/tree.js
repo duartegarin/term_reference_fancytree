@@ -83,7 +83,9 @@
         data.tree.generateFormElements(name + '[]');
         // When a selection is made, we need to update the active trail.
         if(data.node.selected){
-          data.node.parent.addClass('activeTrail');
+          data.node.visitParents(function (node) {
+            node.addClass('activeTrail');
+          });
         }
         else if(data.node.getSelectedNodes().length === 0){
           data.node.visitParents(function (node) {
