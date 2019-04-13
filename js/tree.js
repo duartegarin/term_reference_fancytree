@@ -81,6 +81,15 @@
         // We update the the form inputs on every checkbox state change as
         // ajax events might require the latest state.
         data.tree.generateFormElements(name + '[]');
+        // When a selection is made, we need to update the active trail.
+        if(data.node.selected){
+          data.node.parent.addClass('activeTrail');
+        }
+        else if(data.node.getSelectedNodes().length === 0){
+          data.node.visitParents(function (node) {
+            node.removeClass('activeTrail');
+          });
+        }
       },
       // Change status in bulk for child nodes.
       dblclick: function (event, data) {
