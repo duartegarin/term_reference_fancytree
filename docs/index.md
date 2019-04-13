@@ -27,9 +27,13 @@ This module provides the following features:
 * Full keyboard navigation and WAI-ARIA support for accessibility
 * Quicksearch support to allow navigate to next node by typing the first letters
 
+## Getting started
+
+See the [How it works](how-it-works.md) section of the documentation.
+
 
 ## Resources
 
 Contributing: https://github.com/duartegarin/term_reference_fancytree
-Documentation:
+Documentation: https://term-reference-fancytree.readthedocs.io
 
