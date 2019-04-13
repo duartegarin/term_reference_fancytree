@@ -27,14 +27,6 @@ This module provides the following features:
 * Full keyboard navigation and WAI-ARIA support for accessibility
 * Quicksearch support to allow navigate to next node by typing the first letters
 
-## Getting Started
-
-This module is a zero configuration setup.
-
-In order to get started using this module you need to install the Term Reference Fancytree module as you would any Drupal
-module. No dependencies are required.
-
-After the module is installed you can just go to any entity's form manage screen, and select "Term Reference Fancytree" as a widget.
 
 ## Resources
 
