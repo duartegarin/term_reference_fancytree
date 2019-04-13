@@ -5,3 +5,7 @@
   outline: 0;
   -moz-outline-style: none;
 }
+
+.activeTrail .fancytree-title{
+  border: 1px dotted #3875D7;
+}

@@ -97,8 +97,6 @@
 
     // Loop through the expanded nodes list and expand each one in the tree.
     let tree = expandNodes(Object.values(expanded));
-    // Update the inputs after all expanded items.
-    tree.generateFormElements(name + '[]');
 
     // Function to expand nodes.
     function expandNodes(nodesToExpand) {
@@ -131,11 +129,12 @@
           // levels.
           if(node){
             // Expand the node and call the function again recursively.
-            node.setExpanded(true).then(function (value) {
+            node.load().then(function (value) {
                tree = $('#' + id).fancytree("getTree");
                nodesToExpand.shift();
                expandNodes(nodesToExpand)
              });
+            node.addClass('activeTrail');
           }
           // If the node can't be found, discard it and call the function again.
           else{
@@ -145,6 +144,8 @@
         }
       }
 
+      // Update the inputs after all expanded items.
+      tree.generateFormElements(name + '[]');
       // Return the final tree with all terms expanded.
       return tree;
     }
