@@ -37,9 +37,11 @@ class TermReferenceFancytree extends FormElement {
 
     if (!empty($element['#vocabulary'])) {
 
-      // Get the top level nodes and auto-expanded nodes.
-      $list = TermReferenceFancytree::getTopLevelNodes($element);
-      $expandedNodes = TermReferenceFancytree::getExpandedNodes($element);
+      // Get the ancestors of the selected items.
+      $ancestors = TermReferenceFancytree::getSelectedAncestors($element['#default_value']);
+      // Build a list of top level nodes, including children if containing
+      // selected items.
+      $list = TermReferenceFancytree::getTopLevelNodes($element, $ancestors);
 
       // Attach our libary and settings.
       $element['#attached']['library'][] = 'term_reference_fancytree/tree';
@@ -47,10 +49,6 @@ class TermReferenceFancytree extends FormElement {
         'id' => $element['#id'],
         'name' => $element['#name'],
         'source' => $list,
-        // We pass default values to Javascript so we can have them selected.
-        'default_values' => $element['#default_value'],
-        // We pass the parent terms we want to auto-expand.
-        'expanded' => $expandedNodes,
       ];
 
       // Create HTML wrappers.
@@ -63,36 +61,28 @@ class TermReferenceFancytree extends FormElement {
   }
 
   /**
-   * Returns the term parents that should be expanded by default.
+   * Function that goes through the default values and obtains their ancestors.
    *
-   * These are term parents that contain selected children.
-   *
-   * @param array $element
-   *   The form element.
+   * @param $default_values
+   *    The selected items.
    *
    * @return array
-   *   List of terms that should be expanded.
+   *    The list of ancestors.
    */
-  public static function getExpandedNodes(array $element) {
+  public static function getSelectedAncestors($default_values) {
 
-    // Load a list with the default values.
-    $default_values = [];
-    foreach ($element['#default_value'] as $default_value) {
+    $all_ancestors = [];
 
-      $default_values[] = $default_value['target_id'];
-    }
-    $default_values = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadMultiple($default_values);
-
-    // Create a list of unique term parents for our default values.
-    // These parent terms will need to be expanded.
-    $expanded = [];
     foreach ($default_values as $default_value) {
-      $node['parents'] = $default_value->get('parent')->getValue();
-      $node['vid'] = $default_value->get('vid')->getValue()[0]['target_id'];
-      array_push($expanded, $node);
+      $term_ancestors = \Drupal::entityTypeManager()
+        ->getStorage('taxonomy_term')
+        ->loadAllParents($default_value['target_id']);
+      foreach ($term_ancestors as $ancestor) {
+        $all_ancestors[$ancestor->id()] = $ancestor;
+      }
     }
-    // Return the list without duplicates.
-    return array_unique($expanded, SORT_REGULAR);
+
+    return $all_ancestors;
   }
 
   /**
@@ -107,7 +97,7 @@ class TermReferenceFancytree extends FormElement {
    * @return array
    *   The nested JSON array with the top level nodes.
    */
-  public static function getTopLevelNodes(array $element) {
+  public static function getTopLevelNodes(array $element, $ancestors) {
     // If we have more than one vocabulary, we load the vocabulary names as
     // the initial level.
     if (count($element['#vocabulary']) > 1) {
@@ -115,11 +105,13 @@ class TermReferenceFancytree extends FormElement {
     }
     // Otherwise, we load the list of terms on the first level.
     else {
-      $taxonomy_vocabulary = \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')->load(reset($element['#vocabulary'])->id());
+      $taxonomy_vocabulary = \Drupal::entityTypeManager()
+        ->getStorage('taxonomy_vocabulary')
+        ->load(reset($element['#vocabulary'])->id());
       // Load the terms in the first level.
       $terms = TermReferenceFancytree::loadTerms($taxonomy_vocabulary, 0);
       // Convert the terms list into the Fancytree JSON format.
-      return TermReferenceFancytree::getNestedListJsonArray($terms, $element['#default_value']);
+      return TermReferenceFancytree::getNestedListJsonArray($terms, $element['#default_value'], $ancestors);
     }
   }
 
@@ -134,7 +126,9 @@ class TermReferenceFancytree extends FormElement {
     // @Todo check if we need this.
     if (is_array($input) && !empty($input)) {
       foreach ($input as $tid) {
-        $term = \Drupal::entityTypeManager()->getStorage('taxonomy_term')->load($tid);
+        $term = \Drupal::entityTypeManager()
+          ->getStorage('taxonomy_term')
+          ->load($tid);
         if ($term) {
           $selected_terms[] = $tid;
         }
@@ -155,9 +149,10 @@ class TermReferenceFancytree extends FormElement {
         ->sort('name');
 
       $tids = $query->execute();
-      return \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadMultiple($tids);
-    }
-    catch (QueryException $e) {
+      return \Drupal::entityTypeManager()
+        ->getStorage('taxonomy_term')
+        ->loadMultiple($tids);
+    } catch (QueryException $e) {
       // This site is still using the pre-Drupal 8.5 database schema, where
       // https://www.drupal.org/project/drupal/issues/2543726 was not yet
       // committed to Drupal core.
@@ -182,7 +177,9 @@ class TermReferenceFancytree extends FormElement {
       $tids[] = $record->tid;
     }
 
-    return \Drupal::entityTypeManager()->getStorage('taxonomy_term')->loadMultiple($tids);
+    return \Drupal::entityTypeManager()
+      ->getStorage('taxonomy_term')
+      ->loadMultiple($tids);
   }
 
   /**
@@ -212,7 +209,7 @@ class TermReferenceFancytree extends FormElement {
   /**
    * Function that generates the nested list for the JSON array structure.
    */
-  public static function getNestedListJsonArray($terms, $default_values) {
+  public static function getNestedListJsonArray($terms, $default_values = NULL, $ancestors = NULL) {
     $items = [];
     if (!empty($terms)) {
       foreach ($terms as $term) {
@@ -227,7 +224,24 @@ class TermReferenceFancytree extends FormElement {
           $item['selected'] = TRUE;
         }
 
-        if (isset($term->children) || TermReferenceFancytree::getChildCount($term->id()) >= 1) {
+        // If the term is an ancestor we will want to add it to the tree instead
+        // of marking it as lazy load.
+        if ($ancestors[$term->id()]) {
+          // We add an active trail class to the item.
+          $item['extraClasses'] = "activeTrail";
+          // We load all the children and pass it to this function recursively.
+          $children = \Drupal::entityTypeManager()
+            ->getStorage('taxonomy_term')
+            ->loadChildren($term->id());
+          $child_items = self::getNestedListJsonArray($children, $default_values, $ancestors);
+          // If we get some children, we add those under the item.
+          if ($child_items) {
+            $item['children'] = $child_items;
+          }
+        }
+        // If the term is not in the ancestors we mark it for lazy loading if
+        // it has children.
+        elseif (isset($term->children) || TermReferenceFancytree::getChildCount($term->id()) >= 1) {
           // If the given terms array is nested, directly process the terms.
           if (isset($term->children)) {
             $item['children'] = TermReferenceFancytree::getNestedListJsonArray($term->children, $default_values);
@@ -274,7 +288,8 @@ class TermReferenceFancytree extends FormElement {
     if (!isset($tids[$tid])) {
       /** @var \Drupal\taxonomy\TermInterface $term */
       $term = Term::load($tid);
-      $tids[$tid] = count(static::getTermStorage()->loadTree($term->bundle(), $tid, 1));
+      $tids[$tid] = count(static::getTermStorage()
+        ->loadTree($term->bundle(), $tid, 1));
 
     }
 
