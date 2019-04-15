@@ -226,7 +226,7 @@ class TermReferenceFancytree extends FormElement {
 
         // If the term is an ancestor we will want to add it to the tree instead
         // of marking it as lazy load.
-        if ($ancestors[$term->id()]) {
+        if (isset($ancestors[$term->id()])) {
           // We add an active trail class to the item.
           $item['extraClasses'] = "activeTrail";
           // We load all the children and pass it to this function recursively.
