@@ -9,14 +9,14 @@ After the module is installed you can just go to any entity's form manage screen
 
 ## Video Tutorial
 
-Coming soon.
+[![Video tutorial](images/video.png)](https://www.youtube.com/watch?v=IkSw3A65gFM)
 
 ## Dynamic Loading
 
 The widget loads terms in the following fashion:
 
 1) First, the top level nodes are loaded. These can be either top level terms in the taxonomy, or the vocabulary names in the case of a field using multiple vocabularies.
-2) After the top level nodes are loaded, the widget will load all terms that have selected children.
+2) The widget will also load tree levels that contain selections.
 
 This means that lazyloading is only applied to tree levels without selections.
 
