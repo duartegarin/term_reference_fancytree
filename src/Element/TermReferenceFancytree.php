@@ -101,7 +101,7 @@ class TermReferenceFancytree extends FormElement {
     // If we have more than one vocabulary, we load the vocabulary names as
     // the initial level.
     if (count($element['#vocabulary']) > 1) {
-      return TermReferenceFancytree::getVocabularyNamesJsonArray($element['#vocabulary']);
+      return TermReferenceFancytree::getVocabularyNamesJsonArray($element['#vocabulary'], $element['#default_value'], $ancestors);
     }
     // Otherwise, we load the list of terms on the first level.
     else {
@@ -261,7 +261,7 @@ class TermReferenceFancytree extends FormElement {
   /**
    * Function that generates a list of vocabulary names in JSON.
    */
-  public static function getVocabularyNamesJsonArray($vocabularies) {
+  public static function getVocabularyNamesJsonArray($vocabularies, $default_values = NULL, $ancestors = NULL) {
     $items = [];
     if (!empty($vocabularies)) {
       foreach ($vocabularies as $vocabulary) {
@@ -270,10 +270,34 @@ class TermReferenceFancytree extends FormElement {
           'key' => $vocabulary->id(),
           'vocab' => TRUE,
           'unselectable' => TRUE,
-          'lazy' => TRUE,
           'folder' => TRUE,
         ];
+
+        // Load child terms for the vocabulary.
+        $terms = TermReferenceFancytree::loadTerms($vocabulary, 0);
+
+        // For each term, check if it's an ancestor of a selected item.
+        // If it is, then we need to load the vocabulary folder.
+        foreach ($terms as $term){
+          if($ancestors[$term->id()]){
+            $item['lazy'] = false;
+            break;
+          }
+          // Otherwise, we mark it as lazy.
+          else{
+            $item['lazy'] = true;
+          }
+        }
+
+        // If the vocabulary folder is loaded, we add the active trail and
+        // load its children.
+        if(!$item['lazy']){
+          $item['extraClasses'] = 'activeTrail';
+          $item['children'] = TermReferenceFancytree::getNestedListJsonArray($terms, $default_values, $ancestors);
+        }
+
         $items[] = $item;
+
       }
     }
     return $items;

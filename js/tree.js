@@ -92,8 +92,15 @@
         data.node.visit(function(node) {
           node.setSelected(status);
         });
+      },
+      postProcess: function (event, data) {
+        data.tree.generateFormElements(name + '[]');
+      },
+      init: function (event, data) {
+        data.tree.generateFormElements(name + '[]');
       }
     });
+
   };
 
 })(jQuery, Drupal, drupalSettings);
