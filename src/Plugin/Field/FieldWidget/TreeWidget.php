@@ -27,10 +27,10 @@ class TreeWidget extends WidgetBase implements WidgetInterface {
 
     // Obtain the target vocabularies from the field settings.
     $handler_settings = $this->getFieldSetting('handler_settings');
-    if(isset($handler_settings['target_bundles'])){
+    if (isset($handler_settings['target_bundles'])) {
       $vocabularies = Vocabulary::loadMultiple($handler_settings['target_bundles']);
     }
-    else{
+    else {
       $vocabularies = Vocabulary::loadMultiple();
     }
     // Define element settings.

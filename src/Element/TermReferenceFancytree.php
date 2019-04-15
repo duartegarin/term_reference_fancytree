@@ -63,13 +63,13 @@ class TermReferenceFancytree extends FormElement {
   /**
    * Function that goes through the default values and obtains their ancestors.
    *
-   * @param $default_values
-   *    The selected items.
+   * @param array $default_values
+   *   The selected items.
    *
    * @return array
-   *    The list of ancestors.
+   *   The list of ancestors.
    */
-  public static function getSelectedAncestors($default_values) {
+  public static function getSelectedAncestors(array $default_values) {
 
     $all_ancestors = [];
 
@@ -93,11 +93,13 @@ class TermReferenceFancytree extends FormElement {
    *
    * @param array $element
    *   The form element.
+   * @param array $ancestors
+   *   The list of term ancestors for default values.
    *
    * @return array
    *   The nested JSON array with the top level nodes.
    */
-  public static function getTopLevelNodes(array $element, $ancestors) {
+  public static function getTopLevelNodes(array $element, array $ancestors) {
     // If we have more than one vocabulary, we load the vocabulary names as
     // the initial level.
     if (count($element['#vocabulary']) > 1) {
@@ -152,7 +154,8 @@ class TermReferenceFancytree extends FormElement {
       return \Drupal::entityTypeManager()
         ->getStorage('taxonomy_term')
         ->loadMultiple($tids);
-    } catch (QueryException $e) {
+    }
+    catch (QueryException $e) {
       // This site is still using the pre-Drupal 8.5 database schema, where
       // https://www.drupal.org/project/drupal/issues/2543726 was not yet
       // committed to Drupal core.
@@ -278,20 +281,20 @@ class TermReferenceFancytree extends FormElement {
 
         // For each term, check if it's an ancestor of a selected item.
         // If it is, then we need to load the vocabulary folder.
-        foreach ($terms as $term){
-          if($ancestors[$term->id()]){
-            $item['lazy'] = false;
+        foreach ($terms as $term) {
+          if ($ancestors[$term->id()]) {
+            $item['lazy'] = FALSE;
             break;
           }
           // Otherwise, we mark it as lazy.
-          else{
-            $item['lazy'] = true;
+          else {
+            $item['lazy'] = TRUE;
           }
         }
 
         // If the vocabulary folder is loaded, we add the active trail and
         // load its children.
-        if(!$item['lazy']){
+        if (!$item['lazy']) {
           $item['extraClasses'] = 'activeTrail';
           $item['children'] = TermReferenceFancytree::getNestedListJsonArray($terms, $default_values, $ancestors);
         }
