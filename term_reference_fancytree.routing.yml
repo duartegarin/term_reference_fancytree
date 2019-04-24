@@ -4,4 +4,4 @@ term_reference_fancytree.subTree:
     _controller: '\Drupal\term_reference_fancytree\Controller\SubTreeController::json'
     _title: 'Sub Tree'
   requirements:
-    _permission: 'administer taxonomy'
+    _permission: 'access content'
