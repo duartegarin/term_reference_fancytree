@@ -223,7 +223,7 @@ class TermReferenceFancytree extends FormElement {
 
         // Checking the term against the default values and if present, mark as
         // selected.
-        if (is_numeric(array_search($term->id(), array_column($default_values, 'target_id')))) {
+        if ($default_values && is_numeric(array_search($term->id(), array_column($default_values, 'target_id')))) {
           $item['selected'] = TRUE;
         }
 
