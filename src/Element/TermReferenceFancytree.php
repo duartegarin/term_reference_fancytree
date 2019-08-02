@@ -41,7 +41,7 @@ class TermReferenceFancytree extends FormElement {
       $ancestors = TermReferenceFancytree::getSelectedAncestors($element['#default_value']);
       // Build a list of top level nodes, including children if containing
       // selected items.
-      $list = TermReferenceFancytree::getTopLevelNodes($element, $ancestors);
+      $list = TermReferenceFancytree::getTopLevelNodes($element, $ancestors, $form_state);
 
       // Attach our libary and settings.
       $element['#attached']['library'][] = 'term_reference_fancytree/tree';
@@ -99,7 +99,7 @@ class TermReferenceFancytree extends FormElement {
    * @return array
    *   The nested JSON array with the top level nodes.
    */
-  public static function getTopLevelNodes(array $element, array $ancestors) {
+  public static function getTopLevelNodes(array $element, array $ancestors, $form_state) {
     // If we have more than one vocabulary, we load the vocabulary names as
     // the initial level.
     if (count($element['#vocabulary']) > 1) {
@@ -113,7 +113,7 @@ class TermReferenceFancytree extends FormElement {
       // Load the terms in the first level.
       $terms = TermReferenceFancytree::loadTerms($taxonomy_vocabulary, 0);
       // Convert the terms list into the Fancytree JSON format.
-      return TermReferenceFancytree::getNestedListJsonArray($terms, $element['#default_value'], $ancestors);
+      return TermReferenceFancytree::getNestedListJsonArray($terms, $element, $ancestors, $form_state);
     }
   }
 
@@ -212,7 +212,7 @@ class TermReferenceFancytree extends FormElement {
   /**
    * Function that generates the nested list for the JSON array structure.
    */
-  public static function getNestedListJsonArray($terms, $default_values = NULL, $ancestors = NULL) {
+  public static function getNestedListJsonArray($terms, $element, $ancestors = NULL, $form_state) {
     $items = [];
     if (!empty($terms)) {
       foreach ($terms as $term) {
@@ -221,9 +221,14 @@ class TermReferenceFancytree extends FormElement {
           'key' => $term->id(),
         ];
 
-        // Checking the term against the default values and if present, mark as
+        // Checking the term against the form state and default values and if present, mark as
         // selected.
-        if ($default_values && is_numeric(array_search($term->id(), array_column($default_values, 'target_id')))) {
+        if($form_state->getUserInput()){
+          if(in_array($term->id(), $form_state->getValues()[$element['#field_name']])){
+            $item['selected'] = TRUE;
+          }
+        }
+        elseif ($element['#default_value'] && is_numeric(array_search($term->id(), array_column($element['#default_value'], 'target_id')))) {
           $item['selected'] = TRUE;
         }
 
@@ -236,7 +241,7 @@ class TermReferenceFancytree extends FormElement {
           $children = \Drupal::entityTypeManager()
             ->getStorage('taxonomy_term')
             ->loadChildren($term->id());
-          $child_items = self::getNestedListJsonArray($children, $default_values, $ancestors);
+          $child_items = self::getNestedListJsonArray($children, $element, $ancestors, $form_state);
           // If we get some children, we add those under the item.
           if ($child_items) {
             $item['children'] = $child_items;
@@ -247,7 +252,7 @@ class TermReferenceFancytree extends FormElement {
         elseif (isset($term->children) || TermReferenceFancytree::getChildCount($term->id()) >= 1) {
           // If the given terms array is nested, directly process the terms.
           if (isset($term->children)) {
-            $item['children'] = TermReferenceFancytree::getNestedListJsonArray($term->children, $default_values);
+            $item['children'] = TermReferenceFancytree::getNestedListJsonArray($term->children, $element, $form_state);
           }
           // It the term has children, but they are not present in the array,
           // mark the item for lazy loading.
