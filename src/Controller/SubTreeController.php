@@ -68,7 +68,7 @@ class SubTreeController extends ControllerBase {
         $taxonomy_vocabulary = $this->entityTypeManager()->getStorage('taxonomy_vocabulary')->load($term->getVocabularyId());
         if ($taxonomy_vocabulary) {
           $terms = TermReferenceFancytree::loadTerms($taxonomy_vocabulary, $parent);
-          $list = TermReferenceFancytree::getNestedListJsonArray($terms);
+          $list = TermReferenceFancytree::getNestedListJsonArray($terms, []);
         }
       }
     }
