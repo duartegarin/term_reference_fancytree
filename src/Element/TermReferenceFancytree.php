@@ -243,7 +243,7 @@ class TermReferenceFancytree extends FormElement {
             $item['selected'] = TRUE;
           }
         }
-        elseif ($element['#default_value'] && is_numeric(array_search($term->id(), array_column($element['#default_value'], 'target_id')))) {
+        elseif (isset($element['#default_value']) && is_numeric(array_search($term->id(), array_column($element['#default_value'], 'target_id')))) {
           $item['selected'] = TRUE;
         }
 
@@ -304,7 +304,7 @@ class TermReferenceFancytree extends FormElement {
         // For each term, check if it's an ancestor of a selected item.
         // If it is, then we need to load the vocabulary folder.
         foreach ($terms as $term) {
-          if ($ancestors[$term->id()]) {
+          if (isset($ancestors[$term->id()])) {
             $item['lazy'] = FALSE;
             break;
           }
