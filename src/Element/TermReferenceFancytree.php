@@ -39,7 +39,7 @@ class TermReferenceFancytree extends FormElement {
 
       // Get the ancestors of the selected items.
       // If we are processing input (submit) we want to pass the state with selected items.
-      if($form_state->isProcessingInput()){
+      if($form_state->isProcessingInput() && $form_state->getUserInput()[$element['#field_name']]){
         $ancestors = TermReferenceFancytree::getSelectedAncestors($form_state->getUserInput()[$element['#field_name']], TRUE);
       }
       // If we are not we want the default values (previously submitted).
