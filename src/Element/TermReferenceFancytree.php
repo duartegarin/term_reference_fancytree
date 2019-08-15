@@ -118,7 +118,7 @@ class TermReferenceFancytree extends FormElement {
     // If we have more than one vocabulary, we load the vocabulary names as
     // the initial level.
     if (count($element['#vocabulary']) > 1) {
-      return TermReferenceFancytree::getVocabularyNamesJsonArray($element, $ancestors);
+      return TermReferenceFancytree::getVocabularyNamesJsonArray($element, $ancestors, $form_state);
     }
     // Otherwise, we load the list of terms on the first level.
     else {
@@ -284,7 +284,7 @@ class TermReferenceFancytree extends FormElement {
   /**
    * Function that generates a list of vocabulary names in JSON.
    */
-  public static function getVocabularyNamesJsonArray($element, $ancestors = NULL) {
+  public static function getVocabularyNamesJsonArray($element, $ancestors = NULL, $form_state) {
     $items = [];
     $vocabularies = $element['#vocabulary'];
 
@@ -318,7 +318,7 @@ class TermReferenceFancytree extends FormElement {
         // load its children.
         if (!$item['lazy']) {
           $item['extraClasses'] = 'activeTrail';
-          $item['children'] = TermReferenceFancytree::getNestedListJsonArray($terms, $element, $ancestors);
+          $item['children'] = TermReferenceFancytree::getNestedListJsonArray($terms, $element, $ancestors, $form_state);
         }
 
         $items[] = $item;
