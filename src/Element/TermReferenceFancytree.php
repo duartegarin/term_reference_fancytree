@@ -27,6 +27,7 @@ class TermReferenceFancytree extends FormElement {
         [$class, 'processTree'],
       ],
       '#theme_wrappers' => ['form_element'],
+      '#selection_mode' => '2',
     ];
   }
 
@@ -57,6 +58,7 @@ class TermReferenceFancytree extends FormElement {
         'id' => $element['#id'],
         'name' => $element['#name'],
         'source' => $list,
+        'selection_mode' => (int) $element['#selection_mode'],
       ];
 
       // Create HTML wrappers.
