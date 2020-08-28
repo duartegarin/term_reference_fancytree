@@ -8,11 +8,11 @@
   "support": {
     "issues": "https://github.com/duartegarin/term_reference_fancytree/issues",
     "source": "https://github.com/duartegarin/term_reference_fancytree",
-    "docs": "https://term-reference-fancytree.readthedocs.io/en/latest",
+    "docs": "https://term-reference-fancytree.readthedocs.io/en/latest"
   },
   "require": {
     "drupal/core": "^8.8 || ^9",
     "drupal/jquery_ui": "~1.0",
-    "drupal/jquery_ui_effects": "~1.0",
+    "drupal/jquery_ui_effects": "~1.0"
   }
 }
