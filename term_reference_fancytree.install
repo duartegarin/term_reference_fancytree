@@ -1,0 +1,15 @@
+<?php
+
+/**
+ * Issue #3087699: JQuery UI is being phased out from Drupal core.
+ */
+function term_reference_fancytree_update_8200() {
+  // Make sure webform_editorial.module is manually uninstalled before
+  // installing any new modules.
+  webform_update_8604();
+
+  \Drupal::service('module_installer')->install([
+    'jquery_ui',
+    'jquery_ui_effects',
+  ]);
+}
