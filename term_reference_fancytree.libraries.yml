@@ -14,8 +14,8 @@ fancytree:
     - core/jquery
     - core/jquery.ui
     - core/jquery.ui.widget
-    - core/jquery.ui.effects.core
-    - core/jquery.ui.effects.blind
+    - jquery_ui_effects/core
+    - jquery_ui_effects/blind
 
 tree:
   version: 1.x
