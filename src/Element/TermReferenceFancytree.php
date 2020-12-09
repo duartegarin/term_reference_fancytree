@@ -179,9 +179,21 @@ class TermReferenceFancytree extends FormElement {
         ->sort('name');
 
       $tids = $query->execute();
-      return \Drupal::entityTypeManager()
-        ->getStorage('taxonomy_term')
+
+      $terms = TermReferenceFancytree::getTermStorage()
         ->loadMultiple($tids);
+
+      $language = \Drupal::languageManager()
+        ->getCurrentLanguage()
+        ->getId();
+
+      foreach ($terms as $tid => $term) {
+        if ($term->hasTranslation($language)) {
+          $terms[$tid] = $term->getTranslation($language);
+        }
+      }
+
+      return $terms;
     }
     catch (QueryException $e) {
       // This site is still using the pre-Drupal 8.5 database schema, where
