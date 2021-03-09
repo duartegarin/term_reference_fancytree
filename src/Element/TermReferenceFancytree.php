@@ -38,12 +38,13 @@ class TermReferenceFancytree extends FormElement {
     if (!empty($element['#vocabulary'])) {
 
       // Get the ancestors of the selected items.
-      // If we are processing input (submit) we want to pass the state with selected items.
-      if($form_state->isProcessingInput() && $form_state->getUserInput()[$element['#field_name']]){
+      // If we are processing input (submit) we want to pass the state with
+      // selected items.
+      if ($form_state->isProcessingInput() && $form_state->getUserInput()[$element['#field_name']]) {
         $ancestors = TermReferenceFancytree::getSelectedAncestors($form_state->getUserInput()[$element['#field_name']], TRUE);
       }
       // If we are not we want the default values (previously submitted).
-      else{
+      else {
         $ancestors = TermReferenceFancytree::getSelectedAncestors($element['#default_value'], FALSE);
       }
 
@@ -57,7 +58,13 @@ class TermReferenceFancytree extends FormElement {
         'id' => $element['#id'],
         'name' => $element['#name'],
         'source' => $list,
+        'select_all' => $element['#select_all'],
+        'select_children' => $element['#select_children'],
       ];
+
+      if ($element['#select_all']) {
+        $element['#markup'] = '<a href="#" class="selectAll">Select all</a>';
+      }
 
       // Create HTML wrappers.
       $element['tree'] = [];
@@ -73,6 +80,8 @@ class TermReferenceFancytree extends FormElement {
    *
    * @param array $values
    *   The selected items.
+   * @param bool $processing_input
+   *   Flag if it is processing the input or not.
    *
    * @return array
    *   The list of ancestors.
@@ -85,7 +94,7 @@ class TermReferenceFancytree extends FormElement {
 
       // Check if we are processing input or not because the structure of
       // default values and form state differs.
-      if(!$processing_input){
+      if (!$processing_input) {
         $value = $value['target_id'];
       }
 
@@ -110,11 +119,13 @@ class TermReferenceFancytree extends FormElement {
    *   The form element.
    * @param array $ancestors
    *   The list of term ancestors for default values.
+   * @param \Drupal\Core\Form\FormStateInterface $form_state
+   *   The form state.
    *
    * @return array
    *   The nested JSON array with the top level nodes.
    */
-  public static function getTopLevelNodes(array $element, array $ancestors, $form_state) {
+  public static function getTopLevelNodes(array $element, array $ancestors, FormStateInterface $form_state) {
     // If we have more than one vocabulary, we load the vocabulary names as
     // the initial level.
     if (count($element['#vocabulary']) > 1) {
@@ -236,10 +247,10 @@ class TermReferenceFancytree extends FormElement {
           'key' => $term->id(),
         ];
 
-        // Checking the term against the form state and default values and if present, mark as
-        // selected.
-        if($form_state && $form_state->getUserInput()){
-          if(in_array($term->id(), $form_state->getValues()[$element['#field_name']])){
+        // Checking the term against the form state and default values and
+        // if present, mark as selected.
+        if ($form_state && $form_state->getUserInput()) {
+          if (in_array($term->id(), $form_state->getValues()[$element['#field_name']])) {
             $item['selected'] = TRUE;
           }
         }
