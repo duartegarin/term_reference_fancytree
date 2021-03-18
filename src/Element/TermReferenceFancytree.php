@@ -137,21 +137,23 @@ class TermReferenceFancytree extends FormElement {
    */
   public static function valueCallback(&$element, $input, FormStateInterface $form_state) {
 
-    $selected_terms = [];
-    // Ensure our input is not empty and loop through the input values for
-    // submission.
-    // @Todo check if we need this.
-    if (is_array($input) && !empty($input)) {
-      foreach ($input as $tid) {
-        $term = \Drupal::entityTypeManager()
-          ->getStorage('taxonomy_term')
-          ->load($tid);
-        if ($term) {
-          $selected_terms[] = $tid;
+    if ($input !== FALSE) {
+      $selected_terms = [];
+      // Ensure our input is not empty and loop through the input values for
+      // submission.
+      // @Todo check if we need this.
+      if (is_array($input) && !empty($input)) {
+        foreach ($input as $tid) {
+          $term = \Drupal::entityTypeManager()
+            ->getStorage('taxonomy_term')
+            ->load($tid);
+          if ($term) {
+            $selected_terms[] = $tid;
+          }
         }
       }
+      return $selected_terms;
     }
-    return $selected_terms;
   }
 
   /**
