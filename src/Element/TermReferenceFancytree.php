@@ -314,6 +314,9 @@ class TermReferenceFancytree extends FormElement {
         // Load child terms for the vocabulary.
         $terms = TermReferenceFancytree::loadTerms($vocabulary, 0);
 
+        // Initialize array. (Issue #10).
+        $item['lazy'] = FALSE;
+
         // For each term, check if it's an ancestor of a selected item.
         // If it is, then we need to load the vocabulary folder.
         foreach ($terms as $term) {
