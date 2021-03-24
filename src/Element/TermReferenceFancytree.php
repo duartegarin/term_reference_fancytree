@@ -101,7 +101,7 @@ class TermReferenceFancytree extends FormElement {
         $term_ancestors = \Drupal::entityTypeManager()
           ->getStorage('taxonomy_term')
           ->loadAllParents($value);
-        
+
         foreach ($term_ancestors as $ancestor) {
           $all_ancestors[$ancestor->id()] = $ancestor;
         }
@@ -131,7 +131,7 @@ class TermReferenceFancytree extends FormElement {
     // If we have more than one vocabulary, we load the vocabulary names as
     // the initial level.
     if (count($element['#vocabulary']) > 1) {
-      return TermReferenceFancytree::getVocabularyNamesJsonArray($element, $ancestors, $form_state);
+      return TermReferenceFancytree::getVocabularyNamesJsonArray($element, $form_state, $ancestors);
     }
     // Otherwise, we load the list of terms on the first level.
     else {
@@ -309,7 +309,7 @@ class TermReferenceFancytree extends FormElement {
   /**
    * Function that generates a list of vocabulary names in JSON.
    */
-  public static function getVocabularyNamesJsonArray($element, $ancestors = NULL, $form_state) {
+  public static function getVocabularyNamesJsonArray($element, $form_state, $ancestors = NULL) {
     $items = [];
     $vocabularies = $element['#vocabulary'];
 

@@ -1,6 +1,30 @@
 (function ($, Drupal, drupalSettings) {
   'use strict';
 
+  $.ui.fancytree._FancytreeClass.prototype.selectAllWithLazyLoad = function(topOnly) {
+    var tree = this;
+
+    tree.visit(function(node) {
+      node.setSelected(true);
+
+      if (node.isSelected()) {
+        if (node.isUndefined()) {
+          // Load and select all child nodes
+          node.load().done(function () {
+            node.visit(function (childNode) {
+              childNode.setSelected(true);
+            });
+          });
+        } else {
+          // Select all child nodes
+          node.visit(function (childNode) {
+            childNode.setSelected(true);
+          });
+        }
+      }
+    });
+  };
+
   /**
    * Attaches the JS.
    */
@@ -18,7 +42,7 @@
 
               if (treeSettings[i].select_all) {
                 $('#' + treeSettings[i].id + ' .selectAll').click(function () {
-                  $.ui.fancytree.getTree('#' + treeSettings[i].id).selectAll();
+                  $.ui.fancytree.getTree('#' + treeSettings[i].id).selectAllWithLazyLoad();
                   return false;
                 });
               }
@@ -123,7 +147,6 @@
         data.tree.generateFormElements(name + '[]');
       }
     });
-
   };
 
 })(jQuery, Drupal, drupalSettings);

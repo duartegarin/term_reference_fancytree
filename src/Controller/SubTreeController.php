@@ -23,6 +23,13 @@ class SubTreeController extends ControllerBase {
   protected $request;
 
   /**
+   * The entity type manager service.
+   *
+   * @var \Drupal\Core\Entity\EntityTypeManagerInterface
+   */
+  protected $entityTypeManager;
+
+  /**
    * Constructs a SubTreeController object.
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
@@ -30,6 +37,7 @@ class SubTreeController extends ControllerBase {
    */
   public function __construct(Request $request) {
     $this->request = $request;
+    $this->entityTypeManager = $entity_type_manager;
   }
 
   /**
@@ -37,7 +45,8 @@ class SubTreeController extends ControllerBase {
    */
   public static function create(ContainerInterface $container) {
     return new static(
-      $container->get('request_stack')->getCurrentRequest()
+      $container->get('request_stack')->getCurrentRequest(),
+      $container->get('entity_type.manager')
     );
   }
 
@@ -57,7 +66,7 @@ class SubTreeController extends ControllerBase {
     // If the parent is a vocabulary, we want to load the first level of terms
     // of that vocabulary.
     if ($vocab) {
-      $taxonomy_vocabulary = \Drupal::entityTypeManager()->getStorage('taxonomy_vocabulary')->load($parent);
+      $taxonomy_vocabulary = $this->entityTypeManager->getStorage('taxonomy_vocabulary')->load($parent);
       $terms = TermReferenceFancytree::loadTerms($taxonomy_vocabulary, 0, -1);
       $list = TermReferenceFancytree::getNestedListJsonArray($terms, []);
     }
