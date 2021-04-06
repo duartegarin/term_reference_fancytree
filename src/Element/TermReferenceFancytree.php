@@ -97,14 +97,14 @@ class TermReferenceFancytree extends FormElement {
         if (!$processing_input) {
           $value = $value['target_id'];
         }
+      }
 
-        $term_ancestors = \Drupal::entityTypeManager()
-          ->getStorage('taxonomy_term')
-          ->loadAllParents($value);
+      $term_ancestors = \Drupal::entityTypeManager()
+        ->getStorage('taxonomy_term')
+        ->loadAllParents($value);
 
-        foreach ($term_ancestors as $ancestor) {
-          $all_ancestors[$ancestor->id()] = $ancestor;
-        }
+      foreach ($term_ancestors as $ancestor) {
+        $all_ancestors[$ancestor->id()] = $ancestor;
       }
     }
 
