@@ -59,6 +59,7 @@ class TreeWidget extends WidgetBase implements WidgetInterface, ContainerFactory
     return [
       'select_all' => FALSE,
       'select_children' => FALSE,
+      'select_parents' => TRUE,
     ] + parent::defaultSettings();
   }
 
@@ -82,6 +83,13 @@ class TreeWidget extends WidgetBase implements WidgetInterface, ContainerFactory
       '#default_value' => $this->getSetting('select_children'),
     ];
 
+    $form['select_parents'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Select Parents'),
+      '#description' => $this->t('Select parent terms when child is selected.'),
+      '#default_value' => $this->getSetting('select_parents'),
+    ];
+
     return $form;
   }
 
@@ -97,6 +105,8 @@ class TreeWidget extends WidgetBase implements WidgetInterface, ContainerFactory
     $select_children = $this->getSetting('select_children') ? 'Yes' : 'No';
     $summary[] = $this->t('Select children: @select_children', ['@select_children' => $select_children]);
 
+     $select_parents = $this->getSetting('select_parents') ? 'Yes' : 'No';
+    $summary[] = $this->t('Select Parents: @select_parents', array('@select_parents' => $select_parents));
     return $summary;
   }
 
@@ -119,6 +129,7 @@ class TreeWidget extends WidgetBase implements WidgetInterface, ContainerFactory
     $element['#vocabulary'] = $vocabularies;
     $element['#select_all'] = $this->getSetting('select_all');
     $element['#select_children'] = $this->getSetting('select_children');
+    $element['#select_parents'] = $this->getSetting('select_parents');
 
     return $element;
   }
