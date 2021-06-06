@@ -57,6 +57,7 @@ class TermReferenceFancytree extends FormElement {
         'id' => $element['#id'],
         'name' => $element['#name'],
         'source' => $list,
+        'select_parents' => $element['#select_parents'],
       ];
 
       // Create HTML wrappers.

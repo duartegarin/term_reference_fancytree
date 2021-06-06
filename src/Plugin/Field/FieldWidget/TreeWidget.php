@@ -23,6 +23,38 @@ class TreeWidget extends WidgetBase implements WidgetInterface {
   /**
    * {@inheritdoc}
    */
+  public static function defaultSettings() {
+    return [
+      'select_parents' => FALSE,
+    ] + parent::defaultSettings();
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsForm(array $form, FormStateInterface $form_state) {
+
+    $element['select_parents'] = [
+      '#type' => 'checkbox',
+      '#title' => $this->t('Select Parents'),
+      '#default_value' => $this->getSetting('select_parents'),
+    ];
+    return $element;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public function settingsSummary() {
+
+    $summary = [];
+    $summary[] = $this->t('Select Parents: @select_parents', array('@select_parents' => $this->getSetting('select_parents')));
+    return $summary;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
   public function formElement(FieldItemListInterface $items, $delta, array $element, array &$form, FormStateInterface $form_state) {
 
     // Obtain the target vocabularies from the field settings.
@@ -37,8 +69,8 @@ class TreeWidget extends WidgetBase implements WidgetInterface {
     $element['#type'] = 'term_reference_fancytree';
     $element['#default_value'] = $items->getValue();
     $element['#vocabulary'] = $vocabularies;
+    $element['#select_parents'] = $this->getSetting('select_parents');
 
     return $element;
   }
-
 }
