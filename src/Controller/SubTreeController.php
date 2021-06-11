@@ -3,6 +3,7 @@
 namespace Drupal\term_reference_fancytree\Controller;
 
 use Drupal\Core\Controller\ControllerBase;
+use Drupal\Core\Entity\EntityTypeManagerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -34,8 +35,10 @@ class SubTreeController extends ControllerBase {
    *
    * @param \Symfony\Component\HttpFoundation\Request $request
    *   The current request.
+   * @param \Drupal\Core\Entity\EntityTypeManagerInterface $entity_type_manager
+   *   The entity type manager.
    */
-  public function __construct(Request $request) {
+  public function __construct(Request $request, EntityTypeManagerInterface $entity_type_manager) {
     $this->request = $request;
     $this->entityTypeManager = $entity_type_manager;
   }
