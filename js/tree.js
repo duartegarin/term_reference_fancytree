@@ -87,7 +87,7 @@
       lazyLoad: function (event, data) {
         // Load child nodes via ajax GET /term_reference_fancytree/parent=1234&vocab=true
         data.result = {
-          url: Drupal.url('term_reference_fancytree/subTree'),
+          url: drupalSettings.lazyLoadUrl,
           data: {parent: data.node.key, vocab: data.node.data.vocab},
           cache: false
         };

@@ -1,0 +1,19 @@
+<?php
+
+/**
+ * @file
+ * Main project file.
+ */
+
+use Drupal\term_reference_fancytree\Helper\SubTreeHelper;
+
+/**
+ * Implements hook_page_attachments().
+ */
+function term_reference_fancytree_page_attachments(array &$page) {
+  $helper = SubTreeHelper::create();
+  $route = 'term_reference_fancytree.subTree';
+  $page = $helper->getPageAttachments($route, $page);
+
+  return $page;
+}

@@ -1,0 +1,3 @@
+services:
+  term_reference_fancytree.helper:
+    class: Drupal\term_reference_fancytree\Helper\SubTreeHelper
