@@ -37,9 +37,7 @@ class TermReferenceFancytree extends FormElement {
 
     if (!empty($element['#vocabulary'])) {
 
-      // Get the ancestors of the selected items.
-      // If we are processing input (submit) we want to pass the state with
-      // selected items.
+      // Get the ancestors of the selected items is available.
       $ancestors = [];
       if(isset($element['#default_value']) && !empty($element['#default_value'])) {
         $ancestors = TermReferenceFancytree::getSelectedAncestors($element['#default_value'], FALSE);
@@ -260,9 +258,7 @@ class TermReferenceFancytree extends FormElement {
 
         // Checking the term against the form state and default values and
         // if present, mark as selected.
-        if ($form_state && $form_state->getUserInput() && $form_values = $form_state->getValues() && isset($form_values[$element['#field_name']]) && in_array($term->id(), $form_values[$element['#field_name']])) {
-          $item['selected'] = TRUE;
-        } else if (isset($element['#default_value']) && is_numeric(array_search($term->id(), array_column($element['#default_value'], 'target_id')))) {
+        if (isset($element['#default_value']) && is_numeric(array_search($term->id(), array_column($element['#default_value'], 'target_id')))) {
           $item['selected'] = TRUE;
         }
 
