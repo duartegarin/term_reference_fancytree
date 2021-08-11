@@ -37,9 +37,14 @@ class TermReferenceFancytree extends FormElement {
 
     if (!empty($element['#vocabulary'])) {
 
-      // Get the ancestors of the selected items is available.
-      $ancestors = [];
-      if(isset($element['#default_value']) && !empty($element['#default_value'])) {
+      // Get the ancestors of the selected items.
+      // If we are processing input (submit) we want to pass the state with
+      // selected items.
+      if ($form_state->isProcessingInput() && !$form_state->isRebuilding() && $form_state->getValue($element['#parents'])) {
+        $ancestors = TermReferenceFancytree::getSelectedAncestors($form_state->getValue($element['#parents']), TRUE);
+      }
+      // If we are not we want the default values (previously submitted).
+      else {
         $ancestors = TermReferenceFancytree::getSelectedAncestors($element['#default_value'], FALSE);
       }
 
@@ -258,7 +263,13 @@ class TermReferenceFancytree extends FormElement {
 
         // Checking the term against the form state and default values and
         // if present, mark as selected.
-        if (isset($element['#default_value']) && is_numeric(array_search($term->id(), array_column($element['#default_value'], 'target_id')))) {
+        /**
+         * @var $form_state \Drupal\Core\Form\FormState
+         */
+        if ($form_state && in_array($term->id(),$form_state->getValue($element['#parents']))) {
+          $item['selected'] = TRUE;
+        }
+        elseif (isset($element['#default_value']) && is_numeric(array_search($term->id(), array_column($element['#default_value'], 'target_id')))) {
           $item['selected'] = TRUE;
         }
 
