@@ -9,7 +9,7 @@ fancytree:
     component:
       https://cdn.jsdelivr.net/npm/jquery.fancytree@2.28.1/dist/skin-lion/ui.fancytree.min.css: {}
   js:
-    https://cdn.jsdelivr.net/npm/jquery.fancytree@2.28.1/dist/jquery.fancytree.min.js: { type: external, minified: true }
+    js/jquery.fancytree.min.js: {}
   dependencies:
     - core/jquery
     - core/jquery.ui
