@@ -61,6 +61,7 @@ class TermReferenceFancytree extends FormElement {
         'source' => $list,
         'select_all' => $element['#select_all'],
         'select_children' => $element['#select_children'],
+        'select_parents' => $element['#select_parents'],
         'selection_mode' => (int) $element['#selection_mode'],
       ];
 
