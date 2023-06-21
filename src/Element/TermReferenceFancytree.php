@@ -27,6 +27,7 @@ class TermReferenceFancytree extends FormElement {
         [$class, 'processTree'],
       ],
       '#theme_wrappers' => ['form_element'],
+      '#selection_mode' => '2',
     ];
   }
 
@@ -60,6 +61,7 @@ class TermReferenceFancytree extends FormElement {
         'source' => $list,
         'select_all' => $element['#select_all'],
         'select_children' => $element['#select_children'],
+        'selection_mode' => (int) $element['#selection_mode'],
       ];
 
       if ($element['#select_all']) {

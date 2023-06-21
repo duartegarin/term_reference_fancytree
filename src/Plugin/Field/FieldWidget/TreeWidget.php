@@ -57,9 +57,10 @@ class TreeWidget extends WidgetBase implements WidgetInterface, ContainerFactory
    */
   public static function defaultSettings() {
     return [
-      'select_all' => FALSE,
-      'select_children' => FALSE,
-    ] + parent::defaultSettings();
+        'select_all' => FALSE,
+        'select_children' => FALSE,
+        'selection_mode' => '2',
+      ] + parent::defaultSettings();
   }
 
   /**
@@ -80,6 +81,17 @@ class TreeWidget extends WidgetBase implements WidgetInterface, ContainerFactory
       '#title' => $this->t('Select children'),
       '#description' => $this->t('Select children terms when parent is selected. Note: Select children flag can affect performance since it will load all the children terms and also select them.'),
       '#default_value' => $this->getSetting('select_children'),
+    ];
+
+    $form['selection_mode'] = [
+      '#title' => t('Selection mode'),
+      '#default_value' => $this->getSetting('selection_mode'),
+      '#type' => 'radios',
+      '#options' => [
+        '1' => t('single selection'),
+        '2' => t('multiple selection'),
+        '3' => t('hierarchical selection'),
+      ],
     ];
 
     return $form;
@@ -117,6 +129,7 @@ class TreeWidget extends WidgetBase implements WidgetInterface, ContainerFactory
     $element['#type'] = 'term_reference_fancytree';
     $element['#default_value'] = $items->getValue();
     $element['#vocabulary'] = $vocabularies;
+    $element['#selection_mode'] = $this->getSetting('selection_mode');
     $element['#select_all'] = $this->getSetting('select_all');
     $element['#select_children'] = $this->getSetting('select_children');
 
