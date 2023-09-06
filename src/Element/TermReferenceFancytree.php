@@ -176,12 +176,13 @@ class TermReferenceFancytree extends FormElement {
   public static function loadTerms($vocabulary, $parent = 0) {
     try {
       $query = \Drupal::entityQuery('taxonomy_term')
+        ->accessCheck()
         ->condition('vid', $vocabulary->id())
         ->condition('parent', $parent)
         ->sort('weight')
         ->sort('name');
 
-      $tids = $query->execute();
+      $tids = $query->accessCheck()->execute();
 
       $terms = TermReferenceFancytree::getTermStorage()
         ->loadMultiple($tids);

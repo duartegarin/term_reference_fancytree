@@ -12,8 +12,8 @@ fancytree:
     js/jquery.fancytree.min.js: {}
   dependencies:
     - core/jquery
-    - core/jquery.ui
-    - core/jquery.ui.widget
+    - jquery_ui/core
+    - jquery_ui/widget
     - jquery_ui_effects/core
     - jquery_ui_effects/blind
 
@@ -27,3 +27,4 @@ tree:
   dependencies:
     - term_reference_fancytree/fancytree
     - core/drupalSettings
+    - core/once
