@@ -36,13 +36,14 @@
         let treeSettings = settings.term_reference_fancytree[key].tree || [];
         if (treeSettings instanceof Array) {
           for (let i = 0; i < treeSettings.length; i++) {
+            const id = treeSettings[i].id;
             // Initialise a new Fancytree with our settings.
-            $('#' + treeSettings[i].id).once('term-reference-fancytree').each(function () {
+           $(once('term-reference-fancytree', `#${id}`)).each(function () {
               new Drupal.TermReferenceFancyTree(treeSettings[i].id, treeSettings[i].name, treeSettings[i].source, treeSettings[i].select_children, treeSettings[i].selection_mode, treeSettings[i].select_parents);
 
               if (treeSettings[i].select_all) {
-                $('#' + treeSettings[i].id + ' .selectAll').click(function () {
-                  $.ui.fancytree.getTree('#' + treeSettings[i].id).selectAllWithLazyLoad();
+                $(`#${id} .selectAll`).click(function () {
+                  $.ui.fancytree.getTree(`#${id}`).selectAllWithLazyLoad();
                   return false;
                 });
               }

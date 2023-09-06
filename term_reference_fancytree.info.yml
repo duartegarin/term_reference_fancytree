@@ -1,7 +1,7 @@
 name: 'Term Reference Fancytree'
 type: module
 description: 'Provides a tree like widget for term reference fields using the Fancytree plugin.'
-core_version_requirement: ^8.8 || ^9
+core_version_requirement: ^9.2 || ^10
 dependencies:
   - 'drupal:taxonomy'
   - 'jquery_ui_effects:jquery_ui_effects'
